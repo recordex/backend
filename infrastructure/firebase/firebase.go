@@ -12,7 +12,7 @@ import (
 var firebaseApp *firebase.App
 
 func init() {
-	opt := option.WithCredentialsJSON([]byte(os.Getenv("FIREBASE_KEYFILE_JSON")))
+	opt := option.WithCredentialsJSON([]byte(os.Getenv("FIREBASE_KEY")))
 	var err error
 	firebaseApp, err = firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
