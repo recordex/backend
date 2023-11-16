@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "/gen";
+
+import "validate/validate.proto";
+
+message PostTransactionRequest {
+  // EthereumトランザクションIDは通常、0xで始まる42文字の16進数です。
+  // このフィールドは必須で、正しい形式であることがバリデーションされます。
+  string transaction_id = 1 [(validate.rules).string = {
+    pattern: "^0x[a-fA-F0-9]{40}$",
+    min_len: 42,
+    max_len: 42
+  }];
+}
