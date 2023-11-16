@@ -19,19 +19,19 @@ jobs:
         with:
           go-version: "1.21.2"
 
-      # 引用: https://gist.github.com/diegopacheco/cd795d36e6ebcd2537cd18174865887b
+      # 参照
+      # https://github.com/protocolbuffers/protobuf/blob/main/cmake/README.md#linux-builds
+      # https://protobuf.dev/getting-started/gotutorial/
       - name: Install Protobuf
         run: |
-          sudo apt-get install autoconf automake libtool curl make g++ unzip -y
+          sudo apt-get install make -y
           git clone git@github.com:protocolbuffers/protobuf.git
           cd protobuf
-          git submodule update --init --recursive
-          ./autogen.sh
-          ./configure
-          make
-          make check
-          sudo make install
-          sudo ldconfig
+          cmake .
+          cmake --build . --parallel 10
+          ctest --verbose
+          sudo cmake --install .
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 
       - name: Run protoc
         run: |
