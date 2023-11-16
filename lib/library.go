@@ -1,12 +1,18 @@
 package lib
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"io"
+	"log"
+	"mime/multipart"
 	"net/http"
 	"strings"
 
 	"golang.org/x/xerrors"
 )
 
+// GetAuthorizationBarerTokenFromHeader は Authorization ヘッダーから Bearer トークンを取得します。
 func GetAuthorizationBarerTokenFromHeader(header http.Header) (string, error) {
 	authHeader := header.Get("Authorization")
 	if authHeader == "" {
@@ -21,4 +27,29 @@ func GetAuthorizationBarerTokenFromHeader(header http.Header) (string, error) {
 	barerToken := splitToken[1]
 
 	return barerToken, nil
+}
+
+// CalculateFileHash は引数で指定されたファイルの SHA256 ハッシュ値を計算します。
+func CalculateFileHash(fileHeader *multipart.FileHeader) (string, error) {
+	// ファイルの open
+	file, err := fileHeader.Open()
+	defer func(src multipart.File) {
+		err := src.Close()
+		if err != nil {
+			log.Printf("ファイルの close に失敗しました。fileName -> %s: %+v", fileHeader.Filename, err)
+		}
+	}(file)
+	if err != nil {
+		return "", xerrors.Errorf("ファイルの open に失敗しました。fileName -> %s: %+v", fileHeader.Filename, err)
+	}
+
+	// ハッシュ値の計算
+	hasher := sha256.New()
+	_, err = io.Copy(hasher, file)
+	if err != nil {
+		return "", xerrors.Errorf("ハッシュ値の計算中にエラーが発生しました。：%+v", err)
+	}
+
+	hashValue := hex.EncodeToString(hasher.Sum(nil))
+	return hashValue, nil
 }
