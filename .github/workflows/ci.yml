@@ -23,8 +23,8 @@ jobs:
       # https://ubuntu.pkgs.org/20.04/ubuntu-universe-arm64/golang-goprotobuf-dev_1.3.2-2_arm64.deb.html
       - name: Install Protobuf
         run: |
-          apt update
-          apt install -y golang-goprotobuf-dev
+          sudo apt-get update
+          sudo apt-get install -y golang-goprotobuf-dev
 
       - name: Run protoc
         run: |
