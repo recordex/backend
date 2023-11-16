@@ -5,6 +5,8 @@ on: pull_request
 jobs:
   protobuf-check:
     runs-on: ubuntu-latest
+    env:
+      PROTOBUF_VERSION: "25.0"
 
     steps:
       - uses: actions/checkout@v4
@@ -23,12 +25,10 @@ jobs:
       # https://grpc.io/docs/languages/go/quickstart/
       - name: Install Protobuf
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v25.0/protoc-25.0-linux-x86_64.zip
-          unzip protoc-25.0-linux-x86_64.zip -d protoc-25.0-linux-x86_64
-          sudo mv protoc-25.0-linux-x86_64/bin/protoc /usr/local/bin/protoc
-            sudo mv protoc-25.0-linux-x86_64/include/* /usr/local/include/
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v$PROTOBUF_VERSION/protoc-$PROTOBUF_VERSION-linux-x86_64.zip
+          unzip protoc-$PROTOBUF_VERSION-linux-x86_64.zip -d protoc-$PROTOBUF_VERSION-linux-x86_64
+          sudo mv protoc-$PROTOBUF_VERSION-linux-x86_64/bin/protoc /usr/local/bin/protoc
+          sudo mv protoc-$PROTOBUF_VERSION-linux-x86_64/include/* /usr/local/include/
           go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
           go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
           export PATH="$PATH:$(go env GOPATH)/bin"
