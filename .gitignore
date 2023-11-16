@@ -1,0 +1,4 @@
+# for protobuf
+api/proto/pkg
+
+firebase-adminsdk-secret.json
