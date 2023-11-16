@@ -1,3 +1,4 @@
+mkdir -p api/proto/pkg
 cd api/proto/pkg
 git clone git@github.com:bufbuild/protoc-gen-validate.git
 cd protoc-gen-validate && make build

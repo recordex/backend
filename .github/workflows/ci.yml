@@ -3,7 +3,7 @@ name: ci
 on: pull_request
 
 jobs:
-  build:
+  protobuf-check:
     runs-on: ubuntu-latest
 
     steps:
