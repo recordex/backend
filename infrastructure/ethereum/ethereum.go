@@ -60,6 +60,10 @@ func IsRecordTransactionHashValid(transactionHash string, fileHash string) (bool
 
 	contractAddress := common.HexToAddress(config.Get().RecordContractAddress)
 	recordContract, err := record.NewRecordFilterer(contractAddress, GetEthClient())
+	if err != nil {
+		return false, xerrors.Errorf("RecordContract の初期化に失敗しました。contractAddress -> %s: %w", contractAddress, err)
+	}
+
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddress},
 		FromBlock: receipt.BlockNumber,
