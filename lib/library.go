@@ -36,11 +36,11 @@ func CalculateFileHash(fileHeader *multipart.FileHeader) (string, error) {
 	defer func(src multipart.File) {
 		err := src.Close()
 		if err != nil {
-			log.Printf("ファイルの close に失敗しました。fileName -> %s: %+v", fileHeader.Filename, err)
+			log.Printf("ファイルの close に失敗しました。fileName -> %s: %+v", SanitizeInput(fileHeader.Filename), err)
 		}
 	}(file)
 	if err != nil {
-		return "", xerrors.Errorf("ファイルの open に失敗しました。fileName -> %s: %+v", fileHeader.Filename, err)
+		return "", xerrors.Errorf("ファイルの open に失敗しました。fileName -> %s: %+v", SanitizeInput(fileHeader.Filename), err)
 	}
 
 	// ハッシュ値の計算
@@ -52,4 +52,14 @@ func CalculateFileHash(fileHeader *multipart.FileHeader) (string, error) {
 
 	hashValue := hex.EncodeToString(hasher.Sum(nil))
 	return hashValue, nil
+}
+
+// SanitizeInput は引数で指定された文字列にエスケープ処理をします
+func SanitizeInput(input string) string {
+	// 改行文字とタブ文字のエスケープ
+	input = strings.Replace(input, "\n", "\\n", -1)
+	input = strings.Replace(input, "\r", "\\r", -1)
+	input = strings.Replace(input, "\t", "\\t", -1)
+
+	return input
 }

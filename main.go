@@ -76,7 +76,7 @@ func record(c echo.Context) error {
 	defer func(src multipart.File) {
 		err := src.Close()
 		if err != nil {
-			log.Printf("ファイルの close に失敗しました。fileName -> %s: %+v", fileHeader.Filename, err)
+			log.Printf("ファイルの close に失敗しました。fileName -> %s: %+v", lib.SanitizeInput(fileHeader.Filename), err)
 		}
 	}(file)
 	if err != nil {
@@ -87,7 +87,7 @@ func record(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("ファイルのハッシュ値の計算に失敗しました。：%+v", err))
 	}
-	log.Printf("ファイルのハッシュ値 fileName -> %s: %s", fileHeader.Filename, fileHash)
+	log.Printf("ファイルのハッシュ値 fileName -> %s: %s", lib.SanitizeInput(fileHeader.Filename), fileHash)
 
 	var isTransactionHashValid bool
 	doneChan, errChan := make(chan struct{}), make(chan error)
@@ -114,9 +114,9 @@ func record(c echo.Context) error {
 
 	// トランザクション ID が正しいかどうかをチェック
 	if !isTransactionHashValid {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("transactionHash が不正です。transactionHash -> %s", transactionHash))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("transactionHash が不正です。transactionHash -> %s", lib.SanitizeInput(transactionHash)))
 	}
-	log.Printf("transactionHash の検証に成功しました。transactionHash -> %s", transactionHash)
+	log.Printf("transactionHash の検証に成功しました。transactionHash -> %s", lib.SanitizeInput(transactionHash))
 
 	// cloud storage にファイルをアップロード
 	// 参照: https://cloud.google.com/storage/docs/samples/storage-upload-file?hl=ja#storage_upload_file-go
@@ -124,7 +124,7 @@ func record(c echo.Context) error {
 	defer func(wc *storage.Writer) {
 		err := wc.Close()
 		if err != nil {
-			log.Printf("cloud storage writer の close に失敗しました。fileName -> %s: %+v", wc.Name, err)
+			log.Printf("cloud storage writer の close に失敗しました。fileName -> %s: %+v", lib.SanitizeInput(wc.Name), err)
 		}
 	}(wc)
 	// ファイルを cloud storage にアップロード
@@ -133,5 +133,5 @@ func record(c echo.Context) error {
 		return err
 	}
 
-	return c.String(http.StatusOK, fmt.Sprintf("ファイルのアップロードに成功しました。fileName -> %s", fileHeader.Filename))
+	return c.String(http.StatusOK, fmt.Sprintf("ファイルのアップロードに成功しました。fileName -> %s", lib.SanitizeInput(fileHeader.Filename)))
 }
