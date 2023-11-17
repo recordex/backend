@@ -7,6 +7,7 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
+	"time"
 
 	"cloud.google.com/go/storage"
 	"github.com/labstack/echo/v4"
@@ -14,6 +15,7 @@ import (
 
 	"github.com/recordex/backend/api/gen"
 	"github.com/recordex/backend/config"
+	"github.com/recordex/backend/infrastructure/ethereum"
 	GCPInfrastructure "github.com/recordex/backend/infrastructure/gcp"
 	"github.com/recordex/backend/lib"
 	Middleware "github.com/recordex/backend/middleware"
@@ -55,9 +57,9 @@ func authorize(c echo.Context) error {
 }
 
 func record(c echo.Context) error {
-	transactionID := c.FormValue("transaction_id")
+	transactionHash := c.FormValue("transaction_hash")
 	var req gen.PostTransactionRequest
-	req.TransactionId = transactionID
+	req.TransactionHash = transactionHash
 	// リクエストのバリデーション
 	err := req.Validate()
 	if err != nil {
@@ -81,11 +83,40 @@ func record(c echo.Context) error {
 		return err
 	}
 
-	hashValue, err := lib.CalculateFileHash(fileHeader)
+	fileHash, err := lib.CalculateFileHash(fileHeader)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("ファイルのハッシュ値の計算に失敗しました。：%+v", err))
 	}
-	log.Printf("ファイルのハッシュ値 fileName -> %s: %s", fileHeader.Filename, hashValue)
+	log.Printf("ファイルのハッシュ値 fileName -> %s: %s", fileHeader.Filename, fileHash)
+
+	var isTransactionHashValid bool
+	doneChan, errChan := make(chan struct{}), make(chan error)
+	// タイムアウトは5秒に設定
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	go func(transactionHash string, fileHash string) {
+		defer close(doneChan)
+		isTransactionHashValid, err = ethereum.IsRecordTransactionHashValid(transactionHash, fileHash)
+		errChan <- err
+	}(transactionHash, fileHash)
+	select {
+	case <-ctx.Done():
+		// 5秒以内に処理が終わらなかった場合はエラーを返す
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("transactionHash の検証がタイムアウトしました。transactionHash -> %s：%+v", transactionHash, err))
+	case err := <-errChan:
+		// IsRecordTransactionHashValid がエラーを返した場合もエラーを返す
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("transactionHash の検証に失敗しました。transactionHash -> %s：%+v", transactionHash, err))
+		}
+	case <-doneChan:
+		// IsRecordTransactionHashValid が正常に終了した場合は何もしない
+	}
+
+	// トランザクション ID が正しいかどうかをチェック
+	if !isTransactionHashValid {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("transactionHash が不正です。transactionHash -> %s", transactionHash))
+	}
+	log.Printf("transactionHash の検証に成功しました。transactionHash -> %s", transactionHash)
 
 	// cloud storage にファイルをアップロード
 	// 参照: https://cloud.google.com/storage/docs/samples/storage-upload-file?hl=ja#storage_upload_file-go
@@ -96,6 +127,7 @@ func record(c echo.Context) error {
 			log.Printf("cloud storage writer の close に失敗しました。fileName -> %s: %+v", wc.Name, err)
 		}
 	}(wc)
+	// ファイルを cloud storage にアップロード
 	_, err = io.Copy(wc, file)
 	if err != nil {
 		return err
