@@ -57,10 +57,10 @@ func (m *PostTransactionRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetTransactionId()) != 42 {
+	if utf8.RuneCountInString(m.GetTransactionHash()) != 66 {
 		err := PostTransactionRequestValidationError{
-			field:  "TransactionId",
-			reason: "value length must be 42 runes",
+			field:  "TransactionHash",
+			reason: "value length must be 66 runes",
 		}
 		if !all {
 			return err
@@ -69,10 +69,10 @@ func (m *PostTransactionRequest) validate(all bool) error {
 
 	}
 
-	if !_PostTransactionRequest_TransactionId_Pattern.MatchString(m.GetTransactionId()) {
+	if !_PostTransactionRequest_TransactionHash_Pattern.MatchString(m.GetTransactionHash()) {
 		err := PostTransactionRequestValidationError{
-			field:  "TransactionId",
-			reason: "value does not match regex pattern \"^0x[a-fA-F0-9]{40}$\"",
+			field:  "TransactionHash",
+			reason: "value does not match regex pattern \"^0x[a-fA-F0-9]{64}$\"",
 		}
 		if !all {
 			return err
@@ -160,4 +160,4 @@ var _ interface {
 	ErrorName() string
 } = PostTransactionRequestValidationError{}
 
-var _PostTransactionRequest_TransactionId_Pattern = regexp.MustCompile("^0x[a-fA-F0-9]{40}$")
+var _PostTransactionRequest_TransactionHash_Pattern = regexp.MustCompile("^0x[a-fA-F0-9]{64}$")
