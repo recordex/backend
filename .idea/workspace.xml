@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1a5ccb94-b4ff-46c9-86c6-cbd23b908abb" name="変更" comment="fix: gen ディレクトリへの staticcheck のチェックをなくしました">
+      <change beforePath="$PROJECT_DIR$/handler/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/handler/handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/infrastructure/ethereum/ethereum.go" beforeDir="false" afterPath="$PROJECT_DIR$/infrastructure/ethereum/ethereum.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middleware/jwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/jwt.go" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" url="file://$USER_HOME$/.goenv/versions/1.21.2" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="6msbk0z1" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2YEsCfO5hhsmStDx4NMYTpLxr30" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/keisuke/backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="backend" />
+      <working_directory value="$PROJECT_DIR$" />
+      <go_parameters value="-i" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="backend" />
+      <working_directory value="$PROJECT_DIR$" />
+      <go_parameters value="-i" />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="アプリケーションレベル" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="デフォルトタスク">
+      <changelist id="1a5ccb94-b4ff-46c9-86c6-cbd23b908abb" name="変更" comment="" />
+      <created>1700101947258</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1700101947258</updated>
+      <workItem from="1700101950825" duration="35826000" />
+      <workItem from="1700525217166" duration="10130000" />
+      <workItem from="1700563869152" duration="7179000" />
+    </task>
+    <task id="LOCAL-00001" summary="fix: ssh key の設定を行いました">
+      <option name="closed" value="true" />
+      <created>1700103141092</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1700103141092</updated>
+    </task>
+    <task id="LOCAL-00002" summary="fix: api/proto/pkg を作るようにしました">
+      <option name="closed" value="true" />
+      <created>1700103378191</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1700103378191</updated>
+    </task>
+    <task id="LOCAL-00003" summary="fix: protocol buffer のインストールスクリプトを修正">
+      <option name="closed" value="true" />
+      <created>1700104228068</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1700104228068</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fix: protocol buffer のインストールスクリプトを修正">
+      <option name="closed" value="true" />
+      <created>1700105072024</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1700105072024</updated>
+    </task>
+    <task id="LOCAL-00005" summary="fix: protocol buffer のインストールスクリプトを修正">
+      <option name="closed" value="true" />
+      <created>1700105178265</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1700105178265</updated>
+    </task>
+    <task id="LOCAL-00006" summary="fix: protocol buffer のインストールスクリプトを修正">
+      <option name="closed" value="true" />
+      <created>1700106270747</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1700106270747</updated>
+    </task>
+    <task id="LOCAL-00007" summary="fix: protocol buffer のインストールスクリプトを修正">
+      <option name="closed" value="true" />
+      <created>1700106364152</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1700106364152</updated>
+    </task>
+    <task id="LOCAL-00008" summary="fix: protocol buffer のインストールスクリプトを修正">
+      <option name="closed" value="true" />
+      <created>1700106669674</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1700106669674</updated>
+    </task>
+    <task id="LOCAL-00009" summary="fix: protocol buffer のインストールスクリプトを修正">
+      <option name="closed" value="true" />
+      <created>1700106841705</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1700106841705</updated>
+    </task>
+    <task id="LOCAL-00010" summary="fix: protocol buffer のインストールスクリプトを修正">
+      <option name="closed" value="true" />
+      <created>1700107184777</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1700107184777</updated>
+    </task>
+    <task id="LOCAL-00011" summary="fix: protocol buffer のインストールスクリプトを修正">
+      <option name="closed" value="true" />
+      <created>1700108257106</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1700108257106</updated>
+    </task>
+    <task id="LOCAL-00012" summary="fix: protocol buffer のインストールスクリプトを修正">
+      <option name="closed" value="true" />
+      <created>1700108360093</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1700108360093</updated>
+    </task>
+    <task id="LOCAL-00013" summary="fix: gen ディレクトリへの staticcheck のチェックをなくしました">
+      <option name="closed" value="true" />
+      <created>1700136993785</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1700136993785</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fix: ssh key の設定を行いました" />
+    <MESSAGE value="fix: api/proto/pkg を作るようにしました" />
+    <MESSAGE value="fix: protocol buffer のインストールスクリプトを修正" />
+    <MESSAGE value="fix: gen ディレクトリへの staticcheck のチェックをなくしました" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: gen ディレクトリへの staticcheck のチェックをなくしました" />
+  </component>
+  <component name="VgoProject">
+    <settings-migrated>true</settings-migrated>
+  </component>
+</project>

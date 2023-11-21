@@ -36,14 +36,24 @@ func GetEthClient() *ethclient.Client {
 	return ethClient
 }
 
+// IsTransactionPending は引数で指定されたトランザクションがイーサリアムネットワークに送られ、そのトランザクションが現在進行中かどうかをチェックします。
+func IsTransactionPending(transactionHash string) (bool, error) {
+	commonTxHash := common.HexToHash(transactionHash)
+	_, isPending, err := GetEthClient().TransactionByHash(context.Background(), commonTxHash)
+	if err != nil {
+		return false, xerrors.Errorf("トランザクションの取得に失敗しました。transactionHash -> %s: %w", transactionHash, err)
+	}
+	return isPending, nil
+}
+
 // IsRecordTransactionHashValid はトランザクション ID が正しいかどうかをチェックします。
 // 引数で指定されたトランザクション ID のデータに記録されている FileHash と引数の fileHash が一致するかどうかをチェックし、一致していた場合は true を返します。
 func IsRecordTransactionHashValid(transactionHash string, fileHash string) (bool, error) {
 	// transactionHash がイーサリアムネットワークに送られているかを確認
 	commonTxHash := common.HexToHash(transactionHash)
-	_, isPending, err := GetEthClient().TransactionByHash(context.Background(), commonTxHash)
+	isPending, err := IsTransactionPending(transactionHash)
 	if err != nil {
-		return false, xerrors.Errorf("トランザクションの取得に失敗しました。transactionHash -> %s: %w", transactionHash, err)
+		return false, xerrors.Errorf("トランザクションが進行中かの確認に失敗しました。transactionHash -> %s: %w", transactionHash, err)
 	}
 	if isPending {
 		return false, xerrors.Errorf("トランザクションが未確定です。transactionHash -> %s", transactionHash)
