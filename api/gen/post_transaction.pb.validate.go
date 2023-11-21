@@ -161,3 +161,141 @@ var _ interface {
 } = PostTransactionRequestValidationError{}
 
 var _PostTransactionRequest_TransactionHash_Pattern = regexp.MustCompile("^0x[a-fA-F0-9]{64}$")
+
+// Validate checks the field values on PostTransactionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PostTransactionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PostTransactionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PostTransactionResponseMultiError, or nil if none found.
+func (m *PostTransactionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PostTransactionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if l := utf8.RuneCountInString(m.GetFileName()); l < 1 || l > 255 {
+		err := PostTransactionResponseValidationError{
+			field:  "FileName",
+			reason: "value length must be between 1 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetTransactionHash()) != 66 {
+		err := PostTransactionResponseValidationError{
+			field:  "TransactionHash",
+			reason: "value length must be 66 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if !_PostTransactionResponse_TransactionHash_Pattern.MatchString(m.GetTransactionHash()) {
+		err := PostTransactionResponseValidationError{
+			field:  "TransactionHash",
+			reason: "value does not match regex pattern \"^0x[a-fA-F0-9]{64}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return PostTransactionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PostTransactionResponseMultiError is an error wrapping multiple validation
+// errors returned by PostTransactionResponse.ValidateAll() if the designated
+// constraints aren't met.
+type PostTransactionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PostTransactionResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PostTransactionResponseMultiError) AllErrors() []error { return m }
+
+// PostTransactionResponseValidationError is the validation error returned by
+// PostTransactionResponse.Validate if the designated constraints aren't met.
+type PostTransactionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PostTransactionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PostTransactionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PostTransactionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PostTransactionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PostTransactionResponseValidationError) ErrorName() string {
+	return "PostTransactionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PostTransactionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPostTransactionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PostTransactionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PostTransactionResponseValidationError{}
+
+var _PostTransactionResponse_TransactionHash_Pattern = regexp.MustCompile("^0x[a-fA-F0-9]{64}$")
