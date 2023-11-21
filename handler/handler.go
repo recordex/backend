@@ -26,7 +26,7 @@ func PostRecord(c echo.Context) error {
 	// リクエストのバリデーション
 	err := req.Validate()
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("request が不正です。：%+v", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("request が不正です。request -> %s：%+v", req.String(), err))
 	}
 
 	// ファイルをフォームから取得
@@ -54,11 +54,19 @@ func PostRecord(c echo.Context) error {
 
 	var isTransactionHashValid bool
 	doneChan, errChan := make(chan struct{}), make(chan error)
-	// タイムアウトは5秒に設定
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// タイムアウトは20秒に設定
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	go func(transactionHash string, fileHash string) {
 		defer close(doneChan)
+		// トラザクションが進行中かを1秒ごとに確認
+		for isPending, err := ethereum.IsTransactionPending(transactionHash); isPending; isPending, err = ethereum.IsTransactionPending(transactionHash) {
+			if err != nil {
+				errChan <- err
+				return
+			}
+			time.Sleep(1 * time.Second)
+		}
 		isTransactionHashValid, err = ethereum.IsRecordTransactionHashValid(transactionHash, fileHash)
 		errChan <- err
 	}(transactionHash, fileHash)

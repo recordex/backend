@@ -16,7 +16,7 @@ func FirebaseAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		firebaseApp := FirebaseInfrastructure.GetFirebaseApp()
 		authClient, err := firebaseApp.Auth(ctx)
 		if err != nil {
-			log.Println("firebase アプリケーションの auth クライアントの作成に失敗しました。")
+			log.Printf("firebase アプリケーションの auth クライアントの作成に失敗しました。: %+v", err)
 			return c.JSON(http.StatusInternalServerError, map[string]string{
 				"message": err.Error(),
 			})
