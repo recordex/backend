@@ -6,8 +6,8 @@ option go_package = "/gen";
 
 import "validate/validate.proto";
 
-message PostTransactionRequest {
-  // EthereumトランザクションIDは通常、0xで始まる42文字の16進数です。
+message PostRecordRequest {
+  // EthereumトランザクションIDは通常、0xで始まる64文字の16進数です。
   // このフィールドは必須で、正しい形式であることがバリデーションされます。
   string transaction_hash = 1 [(validate.rules).string = {
     pattern: "^0x[a-fA-F0-9]{64}$",
@@ -16,13 +16,13 @@ message PostTransactionRequest {
   }];
 }
 
-message PostTransactionResponse {
+message PostRecordResponse {
   string file_name = 1 [(validate.rules).string = {
     min_len: 1,
     max_len: 255
   }];
 
-  // EthereumトランザクションIDは通常、0xで始まる42文字の16進数です。
+  // EthereumトランザクションIDは通常、0xで始まる64文字の16進数です。
   // このフィールドは必須で、正しい形式であることがバリデーションされます。
   string transaction_hash = 2 [(validate.rules).string = {
     pattern: "^0x[a-fA-F0-9]{64}$",

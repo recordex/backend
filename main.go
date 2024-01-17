@@ -24,14 +24,15 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	auth := e.Group("")
+	auth := e.Group("/auth")
 	auth.Use(Middleware.FirebaseAuth)
 
 	e.GET("/health", health)
+	e.GET("/diff/pdf", handler.GetDiffPDF)
 	e.POST("/record", handler.PostRecord)
 
-	auth.GET("/auth", authorize)
-	auth.POST("/auth/record", handler.PostRecord)
+	auth.GET("/", authorize)
+	auth.POST("/record", handler.PostRecord)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":8080"))

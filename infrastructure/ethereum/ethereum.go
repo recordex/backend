@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"log"
 	"os"
 
@@ -36,42 +37,61 @@ func GetEthClient() *ethclient.Client {
 	return ethClient
 }
 
-// IsTransactionPending は引数で指定されたトランザクションがイーサリアムネットワークに送られ、そのトランザクションが現在進行中かどうかをチェックします。
-func IsTransactionPending(transactionHash string) (bool, error) {
-	commonTxHash := common.HexToHash(transactionHash)
-	_, isPending, err := GetEthClient().TransactionByHash(context.Background(), commonTxHash)
+// GetNewestFileMetadata は引数で指定されたファイル名の最新のファイルメタデータを取得します。
+func GetNewestFileMetadata(ctx context.Context, fileName string) (*record.RecordFileMetadata, error) {
+	contractAddress := common.HexToAddress(config.Get().RecordContractAddress)
+	recordContract, err := record.NewRecordCaller(contractAddress, GetEthClient())
 	if err != nil {
-		return false, xerrors.Errorf("トランザクションの取得に失敗しました。transactionHash -> %s: %w", transactionHash, err)
+		return nil, xerrors.Errorf("recordContract の初期化に失敗しました。contractAddress -> %s: %+v", contractAddress, err)
+	}
+
+	fileMedata, err := recordContract.GetFileMetadataHistory(&bind.CallOpts{
+		Pending: false,
+		Context: ctx,
+	}, fileName)
+	if err != nil {
+		return nil, xerrors.Errorf("fileMedata の取得に失敗しました。fileName -> %s: %+v", fileName, err)
+	}
+
+	return &fileMedata[len(fileMedata)-1], nil
+}
+
+// IsTransactionPending は引数で指定されたトランザクションがイーサリアムネットワークに送られ、そのトランザクションが現在進行中かどうかをチェックします。
+func IsTransactionPending(ctx context.Context, transactionHash string) (bool, error) {
+	commonTxHash := common.HexToHash(transactionHash)
+	_, isPending, err := GetEthClient().TransactionByHash(ctx, commonTxHash)
+	if err != nil {
+		return false, xerrors.Errorf("トランザクションの取得に失敗しました。transactionHash -> %s: %+v", transactionHash, err)
 	}
 	return isPending, nil
 }
 
 // IsRecordTransactionHashValid はトランザクション ID が正しいかどうかをチェックします。
 // 引数で指定されたトランザクション ID のデータに記録されている FileHash と引数の fileHash が一致するかどうかをチェックし、一致していた場合は true を返します。
-func IsRecordTransactionHashValid(transactionHash string, fileHash string) (bool, error) {
+func IsRecordTransactionHashValid(ctx context.Context, transactionHash string, fileHash string) (bool, error) {
 	// transactionHash がイーサリアムネットワークに送られているかを確認
 	commonTxHash := common.HexToHash(transactionHash)
-	isPending, err := IsTransactionPending(transactionHash)
+	isPending, err := IsTransactionPending(ctx, transactionHash)
 	if err != nil {
-		return false, xerrors.Errorf("トランザクションが進行中かの確認に失敗しました。transactionHash -> %s: %w", transactionHash, err)
+		return false, xerrors.Errorf("トランザクションが進行中かの確認に失敗しました。transactionHash -> %s: %+v", transactionHash, err)
 	}
 	if isPending {
 		return false, xerrors.Errorf("トランザクションが未確定です。transactionHash -> %s", transactionHash)
 	}
 
 	// トランザクションレシートから引数で指定されているトランザクションが成功したかを確認
-	receipt, err := GetEthClient().TransactionReceipt(context.Background(), commonTxHash)
+	receipt, err := GetEthClient().TransactionReceipt(ctx, commonTxHash)
 	if err != nil {
-		return false, xerrors.Errorf("トランザクションレシートの取得に失敗しました。transactionHash -> %s: %w", transactionHash, err)
+		return false, xerrors.Errorf("トランザクションレシートの取得に失敗しました。transactionHash -> %s: %+v", transactionHash, err)
 	}
 	if receipt.Status != 1 {
 		return false, xerrors.Errorf("トランザクションが eth ネットワーク上で失敗しています。transactionHash -> %s", transactionHash)
 	}
 
 	contractAddress := common.HexToAddress(config.Get().RecordContractAddress)
-	recordContract, err := record.NewRecordFilterer(contractAddress, GetEthClient())
+	recordFilterer, err := record.NewRecordFilterer(contractAddress, GetEthClient())
 	if err != nil {
-		return false, xerrors.Errorf("RecordContract の初期化に失敗しました。contractAddress -> %s: %w", contractAddress, err)
+		return false, xerrors.Errorf("recordFilterer の初期化に失敗しました。contractAddress -> %s: %+v", contractAddress, err)
 	}
 
 	query := ethereum.FilterQuery{
@@ -79,16 +99,16 @@ func IsRecordTransactionHashValid(transactionHash string, fileHash string) (bool
 		FromBlock: receipt.BlockNumber,
 		ToBlock:   receipt.BlockNumber,
 	}
-	logs, err := GetEthClient().FilterLogs(context.Background(), query)
+	logs, err := GetEthClient().FilterLogs(ctx, query)
 	if err != nil {
-		return false, xerrors.Errorf("トランザクションログの取得に失敗しました。transactionHash -> %s: %w", transactionHash, err)
+		return false, xerrors.Errorf("トランザクションログの取得に失敗しました。transactionHash -> %s: %+v", transactionHash, err)
 	}
 	if len(logs) == 0 {
 		return false, xerrors.Errorf("トランザクションログが存在しません。transactionHash -> %s", transactionHash)
 	}
 
 	for _, vLog := range logs {
-		event, err := recordContract.ParseFileAdded(vLog)
+		event, err := recordFilterer.ParseFileAdded(vLog)
 		if err != nil {
 			log.Println(err)
 			continue

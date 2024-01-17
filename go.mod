@@ -1,6 +1,6 @@
 module github.com/recordex/backend
 
-go 1.21.2
+go 1.21.4
 
 require (
 	cloud.google.com/go/storage v1.35.1

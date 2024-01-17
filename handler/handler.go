@@ -19,17 +19,12 @@ import (
 	"github.com/recordex/backend/lib"
 )
 
-func PostRecord(c echo.Context) error {
-	transactionHash := c.FormValue("transaction_hash")
-	var req gen.PostTransactionRequest
-	req.TransactionHash = transactionHash
-	// リクエストのバリデーション
-	err := req.Validate()
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("request が不正です。request -> %s：%+v", req.String(), err))
-	}
+// GetDiffPDF はクライアントから送られたファイルと、ブロックチェーンに記録されている最新のファイルハッシュのファイルの差分を色付けした PDF を新たに作成し、クライアントに返します
+// 比較対象のファイルのハッシュ値も返します
+func GetDiffPDF(c echo.Context) error {
+	ctx := context.Background()
 
-	// ファイルをフォームから取得
+	// ファイルヘッダを取得
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("ファイルの取得に失敗しました。：%+v", err))
@@ -43,7 +38,60 @@ func PostRecord(c echo.Context) error {
 		}
 	}(file)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("ファイルのオープンに失敗しました。fileName -> %s：%+v", lib.SanitizeInput(fileHeader.Filename), err))
+	}
+
+	newestFileMetadata, err := ethereum.GetNewestFileMetadata(ctx, fileHeader.Filename)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("最新のファイルメタデータの取得に失敗しました。fileName -> %s：%+v", lib.SanitizeInput(fileHeader.Filename), err))
+	}
+
+	newestFileHash := string(newestFileMetadata.Hash[:])
+	// GCS から最新のファイルを取得
+	rc, err := GCPInfrastructure.GetStorageClient().Bucket(config.Get().CloudStorageBucketName).Object(newestFileHash).NewReader(ctx)
+	defer func(rc *storage.Reader) {
+		err := rc.Close()
+		if err != nil {
+			log.Printf("cloud storage reader の close に失敗しました。fileName -> %s: %+v", newestFileHash, err)
+		}
+	}(rc)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("GCS からの最新ファイルのダウンロードに失敗しました。fileName -> %s：%+v", newestFileHash, err))
+	}
+
+	// ファイルの差分を色付けした PDF を作成
+
+	return c.String(http.StatusOK, "GetDiffPDF")
+}
+
+// PostRecord はトランザクション ID が正しいかどうかをブロックチェーンに記録されているデータからチェックし、ファイルを GCS にアップロードする
+func PostRecord(c echo.Context) error {
+	ctx := context.Background()
+
+	transactionHash := c.FormValue("transaction_hash")
+	var req gen.PostRecordRequest
+	req.TransactionHash = transactionHash
+	// リクエストのバリデーション
+	err := req.Validate()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("request が不正です。request -> %s：%+v", req.String(), err))
+	}
+
+	// ファイルヘッダを取得
+	fileHeader, err := c.FormFile("file")
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("ファイルの取得に失敗しました。：%+v", err))
+	}
+
+	file, err := fileHeader.Open()
+	defer func(src multipart.File) {
+		err := src.Close()
+		if err != nil {
+			log.Printf("ファイルの close に失敗しました。fileName -> %s: %+v", lib.SanitizeInput(fileHeader.Filename), err)
+		}
+	}(file)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("ファイルのオープンに失敗しました。fileName -> %s：%+v", lib.SanitizeInput(fileHeader.Filename), err))
 	}
 
 	fileHash, err := lib.CalculateFileHash(fileHeader)
@@ -55,19 +103,19 @@ func PostRecord(c echo.Context) error {
 	var isTransactionHashValid bool
 	doneChan, errChan := make(chan struct{}), make(chan error)
 	// タイムアウトは20秒に設定
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	go func(transactionHash string, fileHash string) {
 		defer close(doneChan)
 		// トラザクションが進行中かを1秒ごとに確認
-		for isPending, err := ethereum.IsTransactionPending(transactionHash); isPending; isPending, err = ethereum.IsTransactionPending(transactionHash) {
+		for isPending, err := ethereum.IsTransactionPending(ctx, transactionHash); isPending; isPending, err = ethereum.IsTransactionPending(ctx, transactionHash) {
 			if err != nil {
 				errChan <- err
 				return
 			}
 			time.Sleep(1 * time.Second)
 		}
-		isTransactionHashValid, err = ethereum.IsRecordTransactionHashValid(transactionHash, fileHash)
+		isTransactionHashValid, err = ethereum.IsRecordTransactionHashValid(ctx, transactionHash, fileHash)
 		errChan <- err
 	}(transactionHash, fileHash)
 	select {
@@ -90,8 +138,9 @@ func PostRecord(c echo.Context) error {
 	log.Printf("transactionHash の検証に成功しました。transactionHash -> %s", lib.SanitizeInput(transactionHash))
 
 	// cloud storage にファイルをアップロード
+	// アップロードするファイルのファイル名は、そのファイルのハッシュ値にする
 	// 参照: https://cloud.google.com/storage/docs/samples/storage-upload-file?hl=ja#storage_upload_file-go
-	wc := GCPInfrastructure.GetStorageClient().Bucket(config.Get().CloudStorageBucketName).Object(fileHeader.Filename).NewWriter(context.Background())
+	wc := GCPInfrastructure.GetStorageClient().Bucket(config.Get().CloudStorageBucketName).Object(fileHash).NewWriter(context.Background())
 	defer func(wc *storage.Writer) {
 		err := wc.Close()
 		if err != nil {
@@ -101,11 +150,11 @@ func PostRecord(c echo.Context) error {
 	// ファイルを cloud storage にアップロード
 	_, err = io.Copy(wc, file)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("cloud storage へのファイルのアップロードに失敗しました。fileName -> %s：%+v", lib.SanitizeInput(wc.Name), err))
 	}
 
-	log.Printf("cloud storage へのファイルのアップロードに成功しました。fileName -> %s, fileHash -> %s", lib.SanitizeInput(wc.Name), fileHash)
-	resp := gen.PostTransactionResponse{
+	log.Printf("cloud storage へのファイルのアップロードに成功しました。fileName -> %s", lib.SanitizeInput(wc.Name))
+	resp := gen.PostRecordResponse{
 		FileName:        fileHeader.Filename,
 		TransactionHash: transactionHash,
 	}

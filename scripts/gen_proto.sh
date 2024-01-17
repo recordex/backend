@@ -1,5 +1,5 @@
 mkdir -p api/proto/pkg
-cd api/proto/pkg
+cd api/proto/pkg || exit
 git clone git@github.com:bufbuild/protoc-gen-validate.git
 cd protoc-gen-validate && make build
 cd ../../../..
