@@ -47,4 +47,5 @@ jobs:
         if: steps.git-check.outcome == 'failure'
         run: |
           echo "Changes detected in api/gen directory!"
+          git diff api/gen
           exit 1
