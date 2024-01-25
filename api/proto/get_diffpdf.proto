@@ -14,10 +14,8 @@ message GetDiffPDFRequest {
 message GetDiffPDFResponse {
   // newest_file_hash は現時点でブロックチェーンに記録されているそのファイル名の最新バージョンのハッシュ値
   // SHA256 でハッシュ化された 64 文字の 16 進数文字列
-  // プリフィックスの 0x を含んで 64 文字
+  // プリフィックスの 0x を含んで 66 文字
   string newest_file_hash = 1 [(validate.rules).string = {
     pattern: "^0x[a-fA-F0-9]{64}$",
-    min_len: 66,
-    max_len: 66
   }];
 }

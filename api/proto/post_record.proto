@@ -11,8 +11,6 @@ message PostRecordRequest {
   // このフィールドは必須で、正しい形式であることがバリデーションされます。
   string transaction_hash = 1 [(validate.rules).string = {
     pattern: "^0x[a-fA-F0-9]{64}$",
-    min_len: 66,
-    max_len: 66
   }];
 }
 
@@ -26,7 +24,5 @@ message PostRecordResponse {
   // このフィールドは必須で、正しい形式であることがバリデーションされます。
   string transaction_hash = 2 [(validate.rules).string = {
     pattern: "^0x[a-fA-F0-9]{64}$",
-    min_len: 66,
-    max_len: 66
   }];
 }

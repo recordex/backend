@@ -1,3 +1,4 @@
+set -e
 mkdir -p api/proto/pkg
 cd api/proto/pkg || exit
 git clone git@github.com:bufbuild/protoc-gen-validate.git
