@@ -57,18 +57,6 @@ func (m *PostRecordRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetTransactionHash()) != 66 {
-		err := PostRecordRequestValidationError{
-			field:  "TransactionHash",
-			reason: "value length must be 66 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-
-	}
-
 	if !_PostRecordRequest_TransactionHash_Pattern.MatchString(m.GetTransactionHash()) {
 		err := PostRecordRequestValidationError{
 			field:  "TransactionHash",
@@ -193,18 +181,6 @@ func (m *PostRecordResponse) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetTransactionHash()) != 66 {
-		err := PostRecordResponseValidationError{
-			field:  "TransactionHash",
-			reason: "value length must be 66 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-
 	}
 
 	if !_PostRecordResponse_TransactionHash_Pattern.MatchString(m.GetTransactionHash()) {

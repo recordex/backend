@@ -159,18 +159,6 @@ func (m *GetDiffPDFResponse) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetNewestFileHash()) != 66 {
-		err := GetDiffPDFResponseValidationError{
-			field:  "NewestFileHash",
-			reason: "value length must be 66 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-
-	}
-
 	if !_GetDiffPDFResponse_NewestFileHash_Pattern.MatchString(m.GetNewestFileHash()) {
 		err := GetDiffPDFResponseValidationError{
 			field:  "NewestFileHash",
