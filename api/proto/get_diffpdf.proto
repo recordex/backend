@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "/gen";
+
+import "validate/validate.proto";
+
+message GetDiffPDFRequest {
+}
+
+// GetDiffPDFResponse は何のハッシュ値のファイルと比較したのかをクライアントに知らせるために
+// 現時点でブロックチェーンに記録されているそのファイル名の最新バージョンのハッシュ値を返す
+message GetDiffPDFResponse {
+  // newest_file_hash は現時点でブロックチェーンに記録されているそのファイル名の最新バージョンのハッシュ値
+  // SHA256 でハッシュ化された 64 文字の 16 進数文字列
+  // プリフィックスの 0x を含んで 66 文字
+  string newest_file_hash = 1 [(validate.rules).string = {
+    pattern: "^0x[a-fA-F0-9]{64}$",
+  }];
+}

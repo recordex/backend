@@ -6,7 +6,7 @@ jobs:
   protobuf-check:
     runs-on: ubuntu-latest
     env:
-      PROTOBUF_VERSION: "25.0"
+      PROTOBUF_VERSION: "25.2"
 
     steps:
       - uses: actions/checkout@v4
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: "1.21.2"
+          go-version: "1.21"
 
       # 参照
       # https://grpc.io/docs/languages/go/quickstart/
@@ -47,4 +47,5 @@ jobs:
         if: steps.git-check.outcome == 'failure'
         run: |
           echo "Changes detected in api/gen directory!"
+          git diff api/gen
           exit 1

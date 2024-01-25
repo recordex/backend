@@ -1,6 +1,11 @@
+#!/bin/bash
+
+set -e
 mkdir -p api/proto/pkg
-cd api/proto/pkg
-git clone git@github.com:bufbuild/protoc-gen-validate.git
+cd api/proto/pkg || exit
+if [ ! -d "protoc-gen-validate" ]; then
+  git clone git@github.com:bufbuild/protoc-gen-validate.git
+fi
 cd protoc-gen-validate && make build
 cd ../../../..
 protoc --proto_path=api/proto \
