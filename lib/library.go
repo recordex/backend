@@ -75,7 +75,7 @@ func DiffPDF(ctx context.Context, pdfPath string, changedPDFPath string) (string
 	errCh := make(chan error)
 	go func() {
 		defer close(doneCh)
-		command := fmt.Sprintf("diff-pdf -mv --output-diff=%s %s %s", dstFileName, pdfPath, changedPDFPath)
+		command := SanitizeInput(fmt.Sprintf("diff-pdf -mv --output-diff=%s %s %s", dstFileName, pdfPath, changedPDFPath))
 		_, err := exec.Command(command).CombinedOutput()
 		// diff-pdf コマンドは実効性工事でも exit status 1 を返すので、
 		// exit status 1 以外のエラーが発生した場合のみエラーとして扱う

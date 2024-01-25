@@ -6,7 +6,7 @@ jobs:
   protobuf-check:
     runs-on: ubuntu-latest
     env:
-      PROTOBUF_VERSION: "25.1"
+      PROTOBUF_VERSION: "25.2"
 
     steps:
       - uses: actions/checkout@v4

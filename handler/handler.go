@@ -46,7 +46,7 @@ func GetDiffPDF(c echo.Context) error {
 			return xerrors.Errorf("ファイルのオープンに失敗しました。fileName -> %s: %+v", lib.SanitizeInput(fileHeader.Filename), err)
 		}
 
-		file, err := os.Create(fileHeader.Filename)
+		file, err := os.Create(lib.SanitizeInput(fileHeader.Filename))
 		if err != nil {
 			return xerrors.Errorf("ファイルの作成に失敗しました。fileName -> %s: %+v", lib.SanitizeInput(fileHeader.Filename), err)
 		}
@@ -123,13 +123,13 @@ func GetDiffPDF(c echo.Context) error {
 	}
 
 	go func() {
-		err := os.Remove(fileHeader.Filename)
+		err := os.Remove(lib.SanitizeInput(fileHeader.Filename))
 		if err != nil {
 			log.Printf("ファイルの削除に失敗しました。fileName -> %s: %+v", fileHeader.Filename, err)
 		}
 	}()
 	go func() {
-		err := os.Remove(newestFileName)
+		err := os.Remove(lib.SanitizeInput(newestFileName))
 		if err != nil {
 			log.Printf("ファイルの削除に失敗しました。fileName -> %s: %+v", newestFileName, err)
 		}
