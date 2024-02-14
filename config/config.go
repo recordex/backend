@@ -17,19 +17,19 @@ func init() {
 		config = &Config{
 			CloudStorageBucketName: "recordex",
 			EthereumNodeURL:        "https://sepolia.infura.io/v3",
-			RecordContractAddress:  "0xC3e4bb03b22C7DcB3715A2f973f25Ba72d9A2e37",
+			RecordContractAddress:  "0x590b51f9D972625B263eAD11417832Fcf4fc724c",
 		}
 	case "dev":
 		config = &Config{
 			CloudStorageBucketName: "recordex",
 			EthereumNodeURL:        "https://sepolia.infura.io/v3",
-			RecordContractAddress:  "0xC3e4bb03b22C7DcB3715A2f973f25Ba72d9A2e37",
+			RecordContractAddress:  "0x590b51f9D972625B263eAD11417832Fcf4fc724c",
 		}
 	default:
 		config = &Config{
 			CloudStorageBucketName: "recordex",
 			EthereumNodeURL:        "https://sepolia.infura.io/v3",
-			RecordContractAddress:  "0xC3e4bb03b22C7DcB3715A2f973f25Ba72d9A2e37",
+			RecordContractAddress:  "0x590b51f9D972625B263eAD11417832Fcf4fc724c",
 		}
 	}
 }

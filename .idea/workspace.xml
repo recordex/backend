@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a5ccb94-b4ff-46c9-86c6-cbd23b908abb" name="変更" comment="fix: gen ディレクトリへの staticcheck のチェックをなくしました">
+    <list default="true" id="1a5ccb94-b4ff-46c9-86c6-cbd23b908abb" name="変更" comment="chore: proto エラーを修正">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -25,7 +25,33 @@
   </component>
   <component name="GitToolBoxStore">
     <option name="projectConfigVersion" value="5" />
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="main" />
+                    <option name="lastUsedInstant" value="1706144584" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="chore/get_diff_pdf" />
+                    <option name="lastUsedInstant" value="1706144583" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
   </component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="6msbk0z1" />
   </component>
@@ -53,7 +79,7 @@
     &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;chore/get__diff__pdf&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
     &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
@@ -111,6 +137,11 @@
       <workItem from="1705484451048" duration="7525000" />
       <workItem from="1705554694926" duration="1000" />
       <workItem from="1705579281613" duration="719000" />
+      <workItem from="1706160612713" duration="2242000" />
+      <workItem from="1706229751767" duration="597000" />
+      <workItem from="1707287598786" duration="5155000" />
+      <workItem from="1707887115946" duration="1167000" />
+      <workItem from="1707948479909" duration="845000" />
     </task>
     <task id="LOCAL-00001" summary="fix: ssh key の設定を行いました">
       <option name="closed" value="true" />
@@ -227,7 +258,8 @@
     <MESSAGE value="fix: api/proto/pkg を作るようにしました" />
     <MESSAGE value="fix: protocol buffer のインストールスクリプトを修正" />
     <MESSAGE value="fix: gen ディレクトリへの staticcheck のチェックをなくしました" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: gen ディレクトリへの staticcheck のチェックをなくしました" />
+    <MESSAGE value="chore: proto エラーを修正" />
+    <option name="LAST_COMMIT_MESSAGE" value="chore: proto エラーを修正" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
